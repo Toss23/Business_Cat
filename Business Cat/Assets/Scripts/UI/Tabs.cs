@@ -13,6 +13,8 @@ public class Tabs : MonoBehaviour
     [SerializeField] private float swipeSpeed;
     [SerializeField] private Tab[] tabs;
 
+    private Vector2 positionBegin;
+
     private Tab currentTab;
     private Tab nextTab;
     private bool nextTabFound = false;
@@ -24,6 +26,8 @@ public class Tabs : MonoBehaviour
 
     private void Awake()
     {
+        positionBegin = transform.localPosition;
+
         foreach (Tab tab in tabs)
         {
             Vector2 tabPosition = screen.CanvasResolution * tab.Position;
@@ -114,16 +118,16 @@ public class Tabs : MonoBehaviour
     {
         transform.localPosition = Vector2.MoveTowards(
             transform.localPosition, 
-            -tab.Position * screen.CanvasResolution, 
+            positionBegin - tab.Position * screen.CanvasResolution, 
             swipeSpeed * Time.deltaTime);
 
         Vector2 position = transform.localPosition;
-        return position == -tab.Position * screen.CanvasResolution;
+        return position == positionBegin - tab.Position * screen.CanvasResolution;
     }
 
     public bool InstantlyOpen(Tab tab)
     {
-        transform.localPosition = -tab.Position * screen.CanvasResolution;
+        transform.localPosition = positionBegin - tab.Position * screen.CanvasResolution;
         currentTab = tab;
         return true;
     }
