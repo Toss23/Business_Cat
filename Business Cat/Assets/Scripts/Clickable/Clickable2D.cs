@@ -1,10 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public abstract class Clickable2D : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public static bool IsAndroid { get { return Application.platform == RuntimePlatform.Android; } }
     public static Vector2 ScreenSize { get { return new Vector2(Screen.width, Screen.height); } }
+
+    [Header("Main")]
+    [SerializeField] private CanvasScaler canvasScaler;
+
+    public Vector2 CanvasResolution { get { return canvasScaler.referenceResolution; } }
 
     public bool Touched { get; private set; }
     public bool Moved { get; private set; }
@@ -161,9 +167,8 @@ public abstract class Clickable2D : MonoBehaviour, IPointerDownHandler, IPointer
         return new Touch();
     }
 
-    public static Vector2 TouchPositionOnCanvas(Vector2 touchPosition)
+    public Vector2 TouchPositionOnCanvas(Vector2 touchPosition)
     {
-        Vector3 UISize = new Vector3(1920, 1080);
-        return new Vector3((touchPosition.x / ScreenSize.x - 0.5f) * UISize.x, (touchPosition.y / ScreenSize.y - 0.5f) * UISize.y);
+        return new Vector3((touchPosition.x / ScreenSize.x - 0.5f) * CanvasResolution.x, (touchPosition.y / ScreenSize.y - 0.5f) * CanvasResolution.y);
     }
 }
