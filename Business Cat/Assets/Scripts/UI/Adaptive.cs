@@ -46,6 +46,6 @@ public class Adaptive : MonoBehaviour
         else
             scale = currentResolution.x / referenceResolution.x;
 
-        transform.localScale = Vector2.one * scale;
+        transform.localScale = Vector3.one * scale;
     }
 }
