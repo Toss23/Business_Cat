@@ -7,6 +7,8 @@ public class Tabs : MonoBehaviour
         None, Left, Right
     }
 
+    public static Tabs Instance;
+
     [Header("Main")]
     [SerializeField] private RaycastScreen screen;
     [SerializeField] private float swipeSensetive;
@@ -26,12 +28,15 @@ public class Tabs : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         positionBegin = transform.localPosition;
 
         foreach (Tab tab in tabs)
         {
             Vector2 tabPosition = screen.CanvasResolution * tab.Position;
             tab.Content.transform.localPosition = tabPosition;
+            tab.Content.SetActive(true);
 
             if (tab.Position == new Vector2(0, 0))
                 currentTab = tab;
@@ -63,12 +68,20 @@ public class Tabs : MonoBehaviour
                 {
                     OnSwipe(touchSwipe);
                 }
+                else
+                {
+                    touchSwipe = Direction.None;
+                }
             }
             else if (touchSwipe == Direction.Right)
             {
                 if (currentTab.Swipe == Tab.SwipeDirection.LeftAndRight || currentTab.Swipe == Tab.SwipeDirection.Right)
                 {
                     OnSwipe(touchSwipe);
+                }
+                else
+                {
+                    touchSwipe = Direction.None;
                 }
             }
         }
