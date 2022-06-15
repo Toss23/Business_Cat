@@ -141,7 +141,6 @@ public class Tabs : MonoBehaviour
             swipeSpeed * Time.deltaTime);
 
         Vector2 position = transform.localPosition;
-        Debug.Log(position + " - " + (positionBegin - tab.Position * canvas.referenceResolution));
         return position == positionBegin - tab.Position * canvas.referenceResolution;
     }
 
