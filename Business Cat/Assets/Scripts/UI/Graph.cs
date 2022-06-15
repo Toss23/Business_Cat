@@ -5,6 +5,7 @@ public class Graph : MonoBehaviour
 {
     [Header("Main")]
     [SerializeField] private int columnCount = 10;
+    [SerializeField] private Vector2 center = Vector2.zero;
     [SerializeField] private Vector2 margins = Vector2.zero;
     [SerializeField][Range(0.1f, 1f)] private float columnWidth  = 1;
 
@@ -31,12 +32,12 @@ public class Graph : MonoBehaviour
         DeleteColumns();
 
         for (int i = 0; i < columnCount; i++)
-            AddColumn(i, 200 * Mathf.Sin((i + 1) / 3f));
+            AddColumn(i, Mathf.Sin((i + 1) / 3f));
 
         RecolorColumns();
     }
 
-    public void RecolorColumns()
+    private void RecolorColumns()
     {
         for (int i = 0; i < columnCount; i++)
         {
@@ -55,30 +56,30 @@ public class Graph : MonoBehaviour
         }
     }
 
-    public void DeleteColumns()
+    private void DeleteColumns()
     {
         foreach (RectTransform column in columns)
         {
-
+            Destroy(column.gameObject);
         }
         columns = new RectTransform[columnCount];
     }
 
-    public void AddColumn(int index, float height)
+    private void AddColumn(int index, float height)
     {
         GameObject column = new GameObject("Column [" + index + "]");
         column.AddComponent<Image>();
         column.transform.SetParent(transform);
         column.transform.localScale = Vector3.one;
 
-        Vector3 position = Vector3.zero;
-        position.x = ((index + 0.5f) / columnCount - 0.5f) * (graphRect.rect.width - margins.x);
-        position.y = height / 2 - (graphRect.rect.height - margins.y) / 2;
-        column.transform.localPosition = position;
+        Vector2 position = Vector3.zero;
+        position.x = ((index + 0.5f) / columnCount - 0.5f) * (graphRect.rect.width * (1 - margins.x));
+        position.y = (height * (graphRect.rect.height * (1 - margins.y))) / 2 - (graphRect.rect.height * (1 - margins.y)) / 2;
+        column.transform.localPosition = position + center * new Vector2(graphRect.rect.width, graphRect.rect.height);
 
         Vector2 size = Vector2.zero;
-        size.x = (columnWidth / columnCount) * (graphRect.rect.width - margins.x);
-        size.y = height;
+        size.x = (columnWidth / columnCount) * (graphRect.rect.width * (1 - margins.x));
+        size.y = height * (graphRect.rect.height * (1 - margins.y));
         columns[index] = column.GetComponent<RectTransform>();
         columns[index].sizeDelta = size;
     }
