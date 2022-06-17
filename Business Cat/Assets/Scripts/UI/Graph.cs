@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,11 +16,22 @@ public class Graph : MonoBehaviour
     [SerializeField] [Range(0, 1)] private float axisMargins = 0;
     [SerializeField] [Range(0, 10)] private float axisWidth = 10;
 
+    [Header("Lines")]
+    [SerializeField] [Range(0, 1)] private float lineMargins = 0;
+    [SerializeField] [Range(0, 10)] private float lineWidth = 10;
+
+    [Header("Texts")]
+    [SerializeField] [Range(0.05f, 0.2f)] private float textSize;
+    [SerializeField] private TMP_Text minPriceText;
+    [SerializeField] private TMP_Text maxPriceText;
+    [SerializeField] private TMP_Text lastPriceText;
+
     [Header("Colors")]
     [SerializeField] private Color lowPriceColor = Color.red;
     [SerializeField] private Color highPriceColor = Color.green;
     [SerializeField] private Color axisColor = Color.gray;
     [SerializeField] private Color lineColor = new Color(1, 0, 0.25f, 1);
+    [SerializeField] private Color lastPriceLineColor = Color.yellow;
 
     private RectTransform graphRect;
     private RectTransform[] columns;
@@ -27,21 +39,44 @@ public class Graph : MonoBehaviour
     private RectTransform minValueLine, maxValueLine, lastValueLine;
 
     [HideInInspector]
-    public float[] Heights;
-    private float minValue;
-    private float maxValue;
-    private float lastValue;
+    public int[] Heights;
+    private int minValue;
+    private int maxValue;
+    private int lastValue;
 
     private void Awake()
     {
         graphRect = GetComponent<RectTransform>();
 
-        Heights = new float[] { 0, 5, 3, 7, 8, 2, 0, 1 };
+        Heights = new int[columnCount];
+        for (int i = 0; i < columnCount; i++)
+        {
+            Heights[i] = Random.Range(10, 100);
+        }
     }
 
     private void Start()
     {
         UpdateGraph();
+    }
+
+    private int update = 0;
+
+    private void FixedUpdate()
+    {
+        update++;
+        if (update == 50)
+        {
+            update = 0;
+            for (int i = 0; i < columnCount; i++)
+            {
+                if (i == columnCount - 1)
+                    Heights[i] = Random.Range(10, 100);
+                else
+                    Heights[i] = Heights[i + 1];
+            }
+            UpdateGraph();
+        }
     }
 
     public void UpdateGraph()
@@ -52,11 +87,52 @@ public class Graph : MonoBehaviour
         CreateLines();
         CreateColumns();
         CreateAxes();
+        TextOnTop();
     }
 
     private void CreateLines()
     {
+        Vector2 position;
+        Vector2 size;
 
+        position.x = -graphRect.rect.width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y)) * graphRect.rect.height - lineWidth / 2;
+        size.x = graphRect.rect.width * (1 - axisMargins) * (1 - lineMargins);
+        size.y = lineWidth;
+        maxValueLine = AddAxis("Max Value Line", position, size, lineColor);
+
+        maxPriceText.transform.localPosition = position - new Vector2(0, size.y / 2);
+        maxPriceText.text = maxValue.ToString();
+        maxPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, graphRect.rect.height * textSize);
+
+        position.x = -graphRect.rect.width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) / 11) * graphRect.rect.height - lineWidth / 2;
+        size.x = graphRect.rect.width * (1 - axisMargins) * (1 - lineMargins);
+        size.y = lineWidth;
+        minValueLine = AddAxis("Min Value Line", position, size, lineColor);
+
+        minPriceText.transform.localPosition = position - new Vector2(0, size.y / 2);
+        minPriceText.text = minValue.ToString();
+        minPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, graphRect.rect.height * textSize);
+
+        float deltaValue = maxValue - minValue;
+        float height = (lastValue - minValue + deltaValue * 0.1f) / (deltaValue * 1.1f);
+        position.x = graphRect.rect.width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) * height) * graphRect.rect.height - lineWidth / 2;
+        size.x = graphRect.rect.width * (1 - axisMargins) * (1 - lineMargins);
+        size.y = lineWidth;
+        lastValueLine = AddAxis("Last Value Line", position, size, lastPriceLineColor);
+
+        lastPriceText.transform.localPosition = position - new Vector2(0, size.y / 2);
+        lastPriceText.text = lastValue.ToString();
+        lastPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, graphRect.rect.height * textSize);
+    }
+
+    private void TextOnTop()
+    {
+        minPriceText.transform.SetAsLastSibling();
+        maxPriceText.transform.SetAsLastSibling();
+        lastPriceText.transform.SetAsLastSibling();
     }
 
     private void CreateAxes()
@@ -65,12 +141,12 @@ public class Graph : MonoBehaviour
         Vector2 size;
 
         position.x = 0;
-        position.y = (margins.y / 2 - 0.5f) * graphRect.rect.height - axisWidth / 2 + center.y * graphRect.rect.height;
+        position.y = (margins.y / 2 + center.y - 0.5f) * graphRect.rect.height - axisWidth / 2;
         size.x = graphRect.rect.width * (1 - axisMargins);
         size.y = axisWidth;
         axisX = AddAxis("Axis X", position, size, axisColor);
 
-        position.x = (margins.x / 2 - 0.5f) * graphRect.rect.width - axisWidth / 2 + center.x * graphRect.rect.width;
+        position.x = (margins.x / 2 + center.x - 0.5f - 0.01f) * graphRect.rect.width - axisWidth / 2;
         position.y = center.y * graphRect.rect.height;
         size.x = axisWidth;
         size.y = graphRect.rect.height * (1 - axisMargins);
@@ -109,7 +185,7 @@ public class Graph : MonoBehaviour
         minValue = Heights[0];
         maxValue = Heights[0];
         lastValue = Heights[columnCount - 1];
-        foreach (float value in Heights)
+        foreach (int value in Heights)
         {
             if (value < minValue) minValue = value;
             if (value > maxValue) maxValue = value;
@@ -166,7 +242,7 @@ public class Graph : MonoBehaviour
 
         Vector2 position = Vector3.zero;
         position.x = ((index + 0.5f) / columnCount - 0.5f) * (graphRect.rect.width * (1 - margins.x));
-        position.y = (height * (graphRect.rect.height * (1 - margins.y))) / 2 - (graphRect.rect.height * (1 - margins.y)) / 2;
+        position.y = (height - 1) * (graphRect.rect.height * (1 - margins.y)) / 2;
         column.transform.localPosition = position + center * new Vector2(graphRect.rect.width, graphRect.rect.height);
         column.transform.localRotation = Quaternion.identity;
 
