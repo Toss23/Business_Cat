@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class Graph : MonoBehaviour
 {
+    [HideInInspector] public int[] Values;
+
     [Header("Main")]
     [SerializeField] private Vector2 center = Vector2.zero;
     [SerializeField] private Vector2 margins = Vector2.zero;
@@ -33,132 +35,137 @@ public class Graph : MonoBehaviour
     [SerializeField] private Color lineColor = new Color(1, 0, 0.25f, 1);
     [SerializeField] private Color lastPriceLineColor = Color.yellow;
 
-    private RectTransform graphRect;
-    private RectTransform[] columns;
-    private RectTransform axisX, axisY;
-    private RectTransform minValueLine, maxValueLine, lastValueLine;
+    private float width, height;
 
-    [HideInInspector]
-    public int[] Heights;
+    private RectTransform[] columns;
+    private RectTransform lastValueLine;
+
     private int minValue;
     private int maxValue;
     private int lastValue;
+    private int deltaValue;
 
     private void Awake()
     {
-        graphRect = GetComponent<RectTransform>();
+        RectTransform rect = GetComponent<RectTransform>();
+        width = rect.rect.width;
+        height = rect.rect.height;
 
-        Heights = new int[columnCount];
+        columns = new RectTransform[columnCount];
+        Values = new int[columnCount];
+
+        // Test
         for (int i = 0; i < columnCount; i++)
-        {
-            Heights[i] = Random.Range(10, 100);
-        }
+            Values[i] = Random.Range(10, 100);
     }
 
     private void Start()
     {
-        UpdateGraph();
+        Initialize();
+        UpdateColumns();
     }
 
     private int update = 0;
 
     private void FixedUpdate()
     {
+        // Test
         update++;
-        if (update == 50)
+        if (update == 500)
         {
             update = 0;
             for (int i = 0; i < columnCount; i++)
             {
                 if (i == columnCount - 1)
-                    Heights[i] = Random.Range(10, 100);
+                    Values[i] = Random.Range(10, 100);
                 else
-                    Heights[i] = Heights[i + 1];
+                    Values[i] = Values[i + 1];
             }
-            UpdateGraph();
+            UpdateColumns();
         }
     }
 
-    public void UpdateGraph()
+    private void Initialize()
     {
-        DeleteColumns();
-        DeleteAxis();
         FindValues();
-        CreateLines();
+        CreateAdditionalAxes();
+        CreateCoordinateAxes();
         CreateColumns();
-        CreateAxes();
         TextOnTop();
     }
 
-    private void CreateLines()
+    /// <summary>
+    /// Set Values and update columns
+    /// </summary>
+    public void UpdateColumns()
+    {
+        FindValues();
+        UpdateTexts();
+        UpdateLastAxes();
+
+        for (int i = 0; i < columnCount; i++)
+        {
+            UpdateHeightColumn(i, Values[i]);
+            UpdateColorColumn(i);
+        }
+    }
+
+    private void CreateAdditionalAxes()
     {
         Vector2 position;
-        Vector2 size;
+        Vector2 size = new Vector2(width * (1 - axisMargins) * (1 - lineMargins), lineWidth);
+        float columnHeight = (lastValue - minValue + deltaValue * 0.1f) / (deltaValue * 1.1f);
 
-        position.x = -graphRect.rect.width * lineMargins / 2;
-        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y)) * graphRect.rect.height - lineWidth / 2;
-        size.x = graphRect.rect.width * (1 - axisMargins) * (1 - lineMargins);
-        size.y = lineWidth;
-        maxValueLine = AddAxis("Max Value Line", position, size, lineColor);
+        // Maximum
+        position.x = -width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y)) * height - lineWidth / 2;
+        CreateAxis("Max Value Line", position, size, lineColor);
 
         maxPriceText.transform.localPosition = position - new Vector2(0, size.y / 2);
-        maxPriceText.text = maxValue.ToString();
-        maxPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, graphRect.rect.height * textSize);
+        maxPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, height * textSize);
 
-        position.x = -graphRect.rect.width * lineMargins / 2;
-        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) / 11) * graphRect.rect.height - lineWidth / 2;
-        size.x = graphRect.rect.width * (1 - axisMargins) * (1 - lineMargins);
-        size.y = lineWidth;
-        minValueLine = AddAxis("Min Value Line", position, size, lineColor);
+        // Minimum
+        position.x = -width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) / 11) * height - lineWidth / 2;
+        CreateAxis("Min Value Line", position, size, lineColor);
 
         minPriceText.transform.localPosition = position - new Vector2(0, size.y / 2);
         minPriceText.text = minValue.ToString();
-        minPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, graphRect.rect.height * textSize);
+        minPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, height * textSize);
 
-        float deltaValue = maxValue - minValue;
-        float height = (lastValue - minValue + deltaValue * 0.1f) / (deltaValue * 1.1f);
-        position.x = graphRect.rect.width * lineMargins / 2;
-        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) * height) * graphRect.rect.height - lineWidth / 2;
-        size.x = graphRect.rect.width * (1 - axisMargins) * (1 - lineMargins);
-        size.y = lineWidth;
-        lastValueLine = AddAxis("Last Value Line", position, size, lastPriceLineColor);
+        // Last
+        position.x = width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) * columnHeight) * height - lineWidth / 2;
+        lastValueLine = CreateAxis("Last Value Line", position, size, lastPriceLineColor);
 
         lastPriceText.transform.localPosition = position - new Vector2(0, size.y / 2);
         lastPriceText.text = lastValue.ToString();
-        lastPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, graphRect.rect.height * textSize);
+        lastPriceText.GetComponent<RectTransform>().sizeDelta = new Vector2(size.x, height * textSize);
     }
 
-    private void TextOnTop()
-    {
-        minPriceText.transform.SetAsLastSibling();
-        maxPriceText.transform.SetAsLastSibling();
-        lastPriceText.transform.SetAsLastSibling();
-    }
-
-    private void CreateAxes()
+    private void CreateCoordinateAxes()
     {
         Vector2 position;
         Vector2 size;
 
         position.x = 0;
-        position.y = (margins.y / 2 + center.y - 0.5f) * graphRect.rect.height - axisWidth / 2;
-        size.x = graphRect.rect.width * (1 - axisMargins);
+        position.y = (margins.y / 2 + center.y - 0.5f) * height - axisWidth / 2;
+        size.x = width * (1 - axisMargins);
         size.y = axisWidth;
-        axisX = AddAxis("Axis X", position, size, axisColor);
+        CreateAxis("Axis X", position, size, axisColor);
 
-        position.x = (margins.x / 2 + center.x - 0.5f - 0.01f) * graphRect.rect.width - axisWidth / 2;
-        position.y = center.y * graphRect.rect.height;
+        position.x = (margins.x / 2 + center.x - 0.5f - 0.01f) * width - axisWidth / 2;
+        position.y = center.y * height;
         size.x = axisWidth;
-        size.y = graphRect.rect.height * (1 - axisMargins);
-        axisY = AddAxis("Axis Y", position, size, axisColor);
+        size.y = height * (1 - axisMargins);
+        CreateAxis("Axis Y", position, size, axisColor);
     }
 
-    private RectTransform AddAxis(string name, Vector2 position, Vector2 size, Color color)
+    private RectTransform CreateAxis(string name, Vector2 position, Vector2 size, Color color)
     {
         GameObject axis = new GameObject(name, typeof(Image));
         axis.transform.SetParent(transform);
         axis.transform.localScale = Vector3.one;
-
         axis.transform.localPosition = position;
         axis.transform.localRotation = Quaternion.identity;
 
@@ -171,85 +178,89 @@ public class Graph : MonoBehaviour
         return rect;
     }
 
-    private void DeleteAxis()
+    private void CreateColumns()
     {
-        if (axisX != null) Destroy(axisX.gameObject);
-        if (axisY != null) Destroy(axisY.gameObject);
-        if (minValueLine != null) Destroy(minValueLine.gameObject);
-        if (maxValueLine != null) Destroy(maxValueLine.gameObject);
-        if (lastValueLine != null) Destroy(lastValueLine.gameObject);
+        for (int i = 0; i < columnCount; i++)
+        {
+            GameObject column = new GameObject("Column [" + i + "]", typeof(Image));
+            column.transform.SetParent(transform);
+            column.transform.localScale = Vector3.one;
+            column.transform.localPosition = Vector3.zero;
+            column.transform.localRotation = Quaternion.identity;
+            columns[i] = column.GetComponent<RectTransform>();
+        }
+    }
+
+    private void TextOnTop()
+    {
+        minPriceText.transform.SetAsLastSibling();
+        maxPriceText.transform.SetAsLastSibling();
+        lastPriceText.transform.SetAsLastSibling();
     }
 
     private void FindValues()
     {
-        minValue = Heights[0];
-        maxValue = Heights[0];
-        lastValue = Heights[columnCount - 1];
-        foreach (int value in Heights)
+        minValue = Values[0];
+        maxValue = Values[0];
+        lastValue = Values[columnCount - 1];
+        foreach (int value in Values)
         {
             if (value < minValue) minValue = value;
             if (value > maxValue) maxValue = value;
         }
+        deltaValue = maxValue - minValue;
     }
 
-    private void CreateColumns()
+    private void UpdateHeightColumn(int index, float value)
     {
-        float deltaValue = maxValue - minValue;
-        for (int i = 0; i < columnCount; i++)
-        {
-            float height = (Heights[i] - minValue + deltaValue * 0.1f) / (deltaValue * 1.1f);
-            AddColumn(i, height);
-        }
-        RecolorColumns();
-    }
+        value = (value - minValue + deltaValue * 0.1f) / (deltaValue * 1.1f);
 
-    private void RecolorColumns()
-    {
-        for (int i = 0; i < columnCount; i++)
-        {
-            Image image = columns[i].GetComponent<Image>();
-            if (i == 0)
-            {
-                image.color = highPriceColor;
-            }
-            else
-            {
-                if (columns[i].rect.height >= columns[i - 1].rect.height)
-                    image.color = highPriceColor;
-                else
-                    image.color = lowPriceColor ;
-            }
-        }
-    }
-
-    private void DeleteColumns()
-    {
-        if (columns != null)
-        {
-            foreach (RectTransform column in columns)
-            {
-                Destroy(column.gameObject);
-            }
-        }
-        columns = new RectTransform[columnCount];
-    }
-
-    private void AddColumn(int index, float height)
-    {
-        GameObject column = new GameObject("Column [" + index + "]", typeof(Image));
-        column.transform.SetParent(transform);
-        column.transform.localScale = Vector3.one;
+        GameObject column = columns[index].gameObject;
 
         Vector2 position = Vector3.zero;
-        position.x = ((index + 0.5f) / columnCount - 0.5f) * (graphRect.rect.width * (1 - margins.x));
-        position.y = (height - 1) * (graphRect.rect.height * (1 - margins.y)) / 2;
-        column.transform.localPosition = position + center * new Vector2(graphRect.rect.width, graphRect.rect.height);
+        position.x = ((index + 0.5f) / columnCount - 0.5f) * (width * (1 - margins.x));
+        position.y = (value - 1) * (height * (1 - margins.y)) / 2;
+        column.transform.localPosition = position + center * new Vector2(width, height);
         column.transform.localRotation = Quaternion.identity;
 
         Vector2 size = Vector2.zero;
-        size.x = (columnWidth / columnCount) * (graphRect.rect.width * (1 - margins.x));
-        size.y = height * (graphRect.rect.height * (1 - margins.y));
-        columns[index] = column.GetComponent<RectTransform>();
+        size.x = (columnWidth / columnCount) * (width * (1 - margins.x));
+        size.y = value * (height * (1 - margins.y));
         columns[index].sizeDelta = size;
+    }
+
+    private void UpdateColorColumn(int index)
+    {
+        Image image = columns[index].GetComponent<Image>();
+        if (index == 0)
+        {
+            image.color = highPriceColor;
+        }
+        else
+        {
+            if (Values[index] >= Values[index - 1])
+                image.color = highPriceColor;
+            else
+                image.color = lowPriceColor;
+        }
+    }
+
+    private void UpdateTexts()
+    {
+        maxPriceText.text = maxValue.ToString();
+        minPriceText.text = minValue.ToString();
+        lastPriceText.text = lastValue.ToString();
+    }
+
+    private void UpdateLastAxes()
+    {
+        Vector2 position;
+        float columnHeight = (lastValue - minValue + deltaValue * 0.1f) / (deltaValue * 1.1f);
+
+        position.x = width * lineMargins / 2;
+        position.y = (margins.y / 2 + center.y - 0.5f + (1 - margins.y) * columnHeight) * height - lineWidth / 2;
+
+        lastValueLine.localPosition = position;
+        lastPriceText.transform.localPosition = position - new Vector2(0, lineWidth / 2);
     }
 }
