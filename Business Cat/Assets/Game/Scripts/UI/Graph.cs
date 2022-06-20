@@ -53,36 +53,14 @@ public class Graph : MonoBehaviour
 
         columns = new RectTransform[columnCount];
         Values = new int[columnCount];
-
-        // Test
         for (int i = 0; i < columnCount; i++)
-            Values[i] = Random.Range(10, 100);
+            Values[i] = 0;
     }
 
     private void Start()
     {
         Initialize();
         UpdateColumns();
-    }
-
-    private int update = 0;
-
-    private void FixedUpdate()
-    {
-        // Test
-        update++;
-        if (update == 500)
-        {
-            update = 0;
-            for (int i = 0; i < columnCount; i++)
-            {
-                if (i == columnCount - 1)
-                    Values[i] = Random.Range(10, 100);
-                else
-                    Values[i] = Values[i + 1];
-            }
-            UpdateColumns();
-        }
     }
 
     private void Initialize()
@@ -209,6 +187,7 @@ public class Graph : MonoBehaviour
             if (value > maxValue) maxValue = value;
         }
         deltaValue = maxValue - minValue;
+        if (deltaValue == 0) deltaValue = 1;
     }
 
     private void UpdateHeightColumn(int index, float value)
