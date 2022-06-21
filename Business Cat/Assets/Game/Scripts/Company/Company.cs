@@ -28,6 +28,7 @@ public class Company : MonoBehaviour
 
     public float PriceTrend { get; set; } = 0.5f;
     public int[] PriceHistory { get { return priceHistory; } }
+    public int Price { get { return currentPrice; } }
 
     private void Awake()
     {
@@ -71,5 +72,31 @@ public class Company : MonoBehaviour
     public void OnClick()
     {
         OnClickListener.Select(this);
+    }
+
+    public bool Add(int value)
+    {
+        if (value > 0)
+        {
+            if (count + value <= 1000000)
+            {
+                count += value;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool Remove(int value)
+    {
+        if (value > 0)
+        {
+            if (count - value >= 0)
+            {
+                count -= value;
+                return true;
+            }
+        }
+        return false;
     }
 }

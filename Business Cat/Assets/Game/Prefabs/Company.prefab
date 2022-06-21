@@ -370,7 +370,7 @@ MonoBehaviour:
   identidier: 
   count: 0
   priceHistoryLength: 8
-  updateTime: 10
+  updateTime: 3
   priceMin: 0
   priceMax: 0
   priceSpread: 0
