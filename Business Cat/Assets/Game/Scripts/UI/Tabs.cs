@@ -11,7 +11,7 @@ public class Tabs : MonoBehaviour
     [Header("Main")]
     [SerializeField] private float swipeSensetive;
     [SerializeField] private float swipeSpeed;
-    [SerializeField] private CanvasScaler canvas;
+    [SerializeField] private RectTransform canvas;
     [SerializeField] private Tab[] tabs;
 
     private Vector2 positionBegin;
@@ -21,21 +21,18 @@ public class Tabs : MonoBehaviour
     private Tab nextTab;
     private bool switchingTab;
 
-    private void Awake()
+    private void Start()
     {
         foreach (Tab tab in tabs)
         {
-            Vector2 tabPosition = canvas.referenceResolution * tab.Position;
+            Vector2 tabPosition = canvas.rect.size * tab.Position;
             tab.Content.transform.localPosition = tabPosition;
             tab.Content.SetActive(true);
 
             if (tab.Position == new Vector2(0, 0))
                 currentTab = tab;
         }
-    }
 
-    private void Start()
-    {
         positionBegin = transform.localPosition;
     }
 
@@ -57,7 +54,7 @@ public class Tabs : MonoBehaviour
                             touchPositionBegin = touch.position.x;
                             break;
                         case TouchPhase.Ended:
-                            deltaTouch = (touchPositionBegin - touch.position.x) / canvas.referenceResolution.x;
+                            deltaTouch = (touchPositionBegin - touch.position.x) / canvas.rect.width;
                             break;
                     }
                 }
@@ -68,7 +65,7 @@ public class Tabs : MonoBehaviour
                     touchPositionBegin = Input.mousePosition.x;
 
                 if (Input.GetKeyUp(KeyCode.Mouse0))
-                    deltaTouch = (touchPositionBegin - Input.mousePosition.x) / canvas.referenceResolution.x;
+                    deltaTouch = (touchPositionBegin - Input.mousePosition.x) / canvas.rect.width;
             }
 
             // Detect swipe
@@ -137,11 +134,11 @@ public class Tabs : MonoBehaviour
     {
         transform.localPosition = Vector2.MoveTowards(
             transform.localPosition, 
-            positionBegin - tab.Position * canvas.referenceResolution, 
+            positionBegin - tab.Position * canvas.rect.size, 
             swipeSpeed * Time.deltaTime);
 
         Vector2 position = transform.localPosition;
-        return position == positionBegin - tab.Position * canvas.referenceResolution;
+        return position == positionBegin - tab.Position * canvas.rect.size;
     }
 
     public void Open(Tab tab)
@@ -158,7 +155,7 @@ public class Tabs : MonoBehaviour
     public void InstantlyOpen(string identifier)
     {
         Tab tab = Find(identifier);
-        transform.localPosition = positionBegin - tab.Position * canvas.referenceResolution;
+        transform.localPosition = positionBegin - tab.Position * canvas.rect.size;
         currentTab = tab;
     }
 }

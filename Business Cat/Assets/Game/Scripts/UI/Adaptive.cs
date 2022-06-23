@@ -5,7 +5,7 @@ public class Adaptive : MonoBehaviour
 {
     private enum ScaleMode
     {
-        Height, Width
+        Both, Height, Width
     }
 
     [Header("Main")]
@@ -18,7 +18,8 @@ public class Adaptive : MonoBehaviour
 
     private Vector2 referenceResolution;
     private Vector2 currentResolution;
-    private float scale;
+    private Vector2 scale;
+    private float currentScale;
 
     private void Awake()
     {
@@ -40,12 +41,21 @@ public class Adaptive : MonoBehaviour
     {
         referenceResolution = canvasScaler.referenceResolution;
         currentResolution = rect.rect.size;
+        scale = currentResolution / referenceResolution;
 
-        if (scaleMode == ScaleMode.Height)
-            scale = currentResolution.y / referenceResolution.y;
-        else
-            scale = currentResolution.x / referenceResolution.x;
+        switch (scaleMode)
+        {
+            case ScaleMode.Both:
+                currentScale = scale.x < scale.y ? scale.x : scale.y;
+                break;
+            case ScaleMode.Height:
+                currentScale = scale.y;
+                break;
+            case ScaleMode.Width:
+                currentScale = scale.x;
+                break;
+        }
 
-        transform.localScale = Vector3.one * scale;
+        transform.localScale = Vector3.one * currentScale;
     }
 }

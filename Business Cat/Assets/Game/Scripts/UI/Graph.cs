@@ -45,7 +45,7 @@ public class Graph : MonoBehaviour
     private int lastValue;
     private int deltaValue;
 
-    private void Awake()
+    private void Start()
     {
         RectTransform rect = GetComponent<RectTransform>();
         width = rect.rect.width;
@@ -55,10 +55,7 @@ public class Graph : MonoBehaviour
         Values = new int[columnCount];
         for (int i = 0; i < columnCount; i++)
             Values[i] = 0;
-    }
 
-    private void Start()
-    {
         Initialize();
         UpdateColumns();
     }

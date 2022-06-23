@@ -34,6 +34,14 @@ public class ContentUI : MonoBehaviour
         state = State.Hidden;
     }
 
+    public void ChangeState()
+    {
+        if (state == State.Active)
+            Hide();
+        else
+            Show();
+    }
+
     public static void HideAll()
     {
         if (List != null)
