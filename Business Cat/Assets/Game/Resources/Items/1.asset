@@ -10,8 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e139390684cc11a4bb034aeb51a4b0d4, type: 3}
-  m_Name: Item
+  m_Name: 1
   m_EditorClassIdentifier: 
-  identifier: 123
+  index: 0
+  identifier: Item 0
+  sprite: {fileID: 0}
+  type: 0
   attribute: 0
-  attributeValue: 1
+  attributeValue: 0
