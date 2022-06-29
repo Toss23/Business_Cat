@@ -5,6 +5,9 @@ public class Items : MonoBehaviour
 {
     [SerializeField] private Item[] items;
     [SerializeField] private List<Runnable> onLoad;
+    private Dictionary<Item, bool> haveItem;
+
+    public Item[] Array { get { return items; } }
 
     private void Start()
     {
@@ -12,6 +15,10 @@ public class Items : MonoBehaviour
 
         items = Resources.LoadAll<Item>("Items");
         items = Sort(items);
+
+        haveItem = new Dictionary<Item, bool>();
+        foreach (Item item in items)
+            haveItem.Add(item, LocalData.HaveItem(item));
 
         Debug.Log("[Items] Items loaded: " + items.Length);
 
@@ -56,14 +63,9 @@ public class Items : MonoBehaviour
         return items.ToArray();
     }
 
-    public Item Find(string identifier)
+    public bool HaveItem(Item item)
     {
-        foreach (Item itemData in items)
-        {
-            if (itemData.Identifier == identifier)
-                return itemData;
-        }
-        return null;
+        return haveItem[item];
     }
 
     public void AddRunnableOnLoad(Runnable runnable)

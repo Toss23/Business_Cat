@@ -16,5 +16,6 @@ MonoBehaviour:
   identifier: Item 2
   sprite: {fileID: 0}
   type: 0
-  attribute: 0
-  attributeValue: 0
+  attribute: 2
+  attributeValue: 3
+  prefab: {fileID: 0}

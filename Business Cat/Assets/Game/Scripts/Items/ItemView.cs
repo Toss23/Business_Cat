@@ -6,9 +6,22 @@ using UnityEngine.UI;
 public class ItemView : MonoBehaviour
 {
     [SerializeField] private TMP_Text nameText;
+    [SerializeField] private Image image;
+    [SerializeField] private TMP_Text attributeText;
+    private Button button;
+
+    private void Awake()
+    {
+        button = GetComponent<Button>();
+    }
 
     public void SetItem(Item item)
     {
         nameText.text = item.Identifier;
+
+        if (item.Attribute == Attribute.None)
+            attributeText.text = "---";
+        else
+            attributeText.text = "+" + item.AttributeValue + " " + item.Attribute;
     }
 }

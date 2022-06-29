@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public abstract class Clickable2D : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public static bool IsAndroid { get { return Application.platform == RuntimePlatform.Android; } }
-    public static Vector2 ScreenSize { get { return new Vector2(Screen.width, Screen.height); } }
+    public static Vector2 ScreenSize { get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); } }
 
     [Header("Main")]
     [SerializeField] private CanvasScaler canvasScaler;

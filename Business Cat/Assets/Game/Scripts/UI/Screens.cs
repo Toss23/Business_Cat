@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Tabs : MonoBehaviour
+public class Screens : MonoBehaviour
 {
     private enum Direction
     {
@@ -12,25 +11,25 @@ public class Tabs : MonoBehaviour
     [SerializeField] private float swipeSensetive;
     [SerializeField] private float swipeSpeed;
     [SerializeField] private RectTransform canvas;
-    [SerializeField] private Tab[] tabs;
+    [SerializeField] private Screen[] screens;
 
     private Vector2 positionBegin;
     private float touchPositionBegin;
 
-    private Tab currentTab;
-    private Tab nextTab;
-    private bool switchingTab;
+    private Screen currentScreen;
+    private Screen nextScreen;
+    private bool switchingScreen;
 
     private void Start()
     {
-        foreach (Tab tab in tabs)
+        foreach (Screen screen in screens)
         {
-            Vector2 tabPosition = canvas.rect.size * tab.Position;
-            tab.Content.transform.localPosition = tabPosition;
-            tab.Content.SetActive(true);
+            Vector2 tabPosition = canvas.rect.size * screen.Position;
+            screen.Content.transform.localPosition = tabPosition;
+            screen.Content.SetActive(true);
 
-            if (tab.Position == new Vector2(0, 0))
-                currentTab = tab;
+            if (screen.Position == new Vector2(0, 0))
+                currentScreen = screen;
         }
 
         positionBegin = transform.localPosition;
@@ -38,7 +37,7 @@ public class Tabs : MonoBehaviour
 
     private void Update()
     {
-        if (switchingTab == false)
+        if (switchingScreen == false)
         {
             // Calculate delta touch
             float deltaTouch = 0;
@@ -84,67 +83,67 @@ public class Tabs : MonoBehaviour
             // Open tab on swipe
             if (touchSwipeDirection == Direction.Left)
             {
-                if (currentTab.Swipe == Tab.SwipeDirection.LeftAndRight || currentTab.Swipe == Tab.SwipeDirection.Left)
+                if (currentScreen.Swipe == Screen.SwipeDirection.LeftAndRight || currentScreen.Swipe == Screen.SwipeDirection.Left)
                     OnSwipe(touchSwipeDirection);
             }
             else if (touchSwipeDirection == Direction.Right)
             {
-                if (currentTab.Swipe == Tab.SwipeDirection.LeftAndRight || currentTab.Swipe == Tab.SwipeDirection.Right)
+                if (currentScreen.Swipe == Screen.SwipeDirection.LeftAndRight || currentScreen.Swipe == Screen.SwipeDirection.Right)
                     OnSwipe(touchSwipeDirection);
             }
         }
 
-        if (switchingTab == true)
+        if (switchingScreen == true)
         {
-            if (MoveTo(nextTab))
+            if (MoveTo(nextScreen))
             {
-                currentTab = nextTab;
-                switchingTab = false;
+                currentScreen = nextScreen;
+                switchingScreen = false;
             }
         }
     }
 
     private void OnSwipe(Direction direction)
     {
-        Vector2 nextTabPosition = currentTab.Position + new Vector2(direction == Direction.Left ? -1 : 1, 0);
+        Vector2 nextTabPosition = currentScreen.Position + new Vector2(direction == Direction.Left ? -1 : 1, 0);
         Open(Find(nextTabPosition));
     }
 
-    public Tab Find(string identifier)
+    public Screen Find(string identifier)
     {
-        foreach (Tab tab in tabs)
+        foreach (Screen screen in screens)
         {
-            if (tab.Identifier == identifier)
-                return tab;
+            if (screen.Identifier == identifier)
+                return screen;
         }
         return null;
     }
 
-    private Tab Find(Vector2 position)
+    private Screen Find(Vector2 position)
     {
-        foreach (Tab tab in tabs)
+        foreach (Screen screen in screens)
         {
-            if (tab.Position == position)
-                return tab;
+            if (screen.Position == position)
+                return screen;
         }
         return null;
     }
 
-    public bool MoveTo(Tab tab)
+    public bool MoveTo(Screen screen)
     {
         transform.localPosition = Vector2.MoveTowards(
             transform.localPosition, 
-            positionBegin - tab.Position * canvas.rect.size, 
+            positionBegin - screen.Position * canvas.rect.size, 
             swipeSpeed * Time.deltaTime);
 
         Vector2 position = transform.localPosition;
-        return position == positionBegin - tab.Position * canvas.rect.size;
+        return position == positionBegin - screen.Position * canvas.rect.size;
     }
 
-    public void Open(Tab tab)
+    public void Open(Screen screen)
     {
-        nextTab = tab;
-        switchingTab = true;
+        nextScreen = screen;
+        switchingScreen = true;
     }
 
     public void Open(string identifier)
@@ -154,14 +153,14 @@ public class Tabs : MonoBehaviour
 
     public void InstantlyOpen(string identifier)
     {
-        Tab tab = Find(identifier);
-        transform.localPosition = positionBegin - tab.Position * canvas.rect.size;
-        currentTab = tab;
+        Screen screen = Find(identifier);
+        transform.localPosition = positionBegin - screen.Position * canvas.rect.size;
+        currentScreen = screen;
     }
 }
 
 [System.Serializable]
-public class Tab
+public class Screen
 {
     public enum SwipeDirection
     {

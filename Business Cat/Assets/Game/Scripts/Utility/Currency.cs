@@ -6,9 +6,9 @@ public class Currency : MonoBehaviour
     [Header("Main")]
     [SerializeField] private string identifier;
     [SerializeField] private int count;
-
-    [Header("Config")]
     [SerializeField] private int countMax;
+
+    [Header("View")]
     [SerializeField] private TMP_Text text;
 
     public int Count { get { return count; } }
