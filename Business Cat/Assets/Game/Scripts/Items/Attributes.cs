@@ -16,18 +16,16 @@ public class Attributes : MonoBehaviour
     private void Awake()
     {
         attributes = new Dictionary<Attribute, int>();
+
+        int count = System.Enum.GetNames(typeof(Attribute)).Length;
+        for (int i = 0; i < count; i++)
+            attributes.Add((Attribute)i, 0);
+
         items.AddRunnableOnLoad(new Runnable(CreateAttributes));
     }
 
     private void CreateAttributes()
     {
-        int count = System.Enum.GetNames(typeof(Attribute)).Length;
-
-        for (int i = 0; i < count; i++)
-        {
-            attributes.Add((Attribute)i, 0);
-        }
-
         foreach (Item item in items.Array)
         {
             if (items.HaveItem(item))
