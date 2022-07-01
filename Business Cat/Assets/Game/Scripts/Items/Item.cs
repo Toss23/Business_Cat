@@ -14,6 +14,7 @@ public class Item : ScriptableObject
     [SerializeField] private int index;
     [Space(10)]
     [SerializeField] private string identifier;
+    [SerializeField] private string displayName;
     [SerializeField] private Sprite sprite;
     [SerializeField] private ItemType type;
     [Space(10)]
@@ -24,6 +25,7 @@ public class Item : ScriptableObject
 
     public int Index { get { return index; } }
     public string Identifier { get { return identifier; } }
+    public string DisplayName { get { return displayName; } }
     public Sprite Sprite { get { return sprite; } }
     public ItemType Type { get { return type; } }
     public Attribute Attribute { get { return attribute; } }

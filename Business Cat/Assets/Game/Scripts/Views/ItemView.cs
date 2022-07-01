@@ -17,7 +17,7 @@ public class ItemView : MonoBehaviour
 
     public void SetItem(Item item)
     {
-        nameText.text = item.Identifier;
+        nameText.text = item.DisplayName;
 
         if (item.Attribute == Attribute.None)
             attributeText.text = "---";

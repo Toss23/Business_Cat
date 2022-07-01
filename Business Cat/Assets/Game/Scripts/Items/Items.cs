@@ -63,6 +63,17 @@ public class Items : MonoBehaviour
         return items.ToArray();
     }
 
+    public Item Find(string identifier)
+    {
+        foreach (Item item in items)
+        {
+            if (item.Identifier == identifier)
+                return item;
+        }
+
+        return null;
+    }
+
     public bool HaveItem(Item item)
     {
         return haveItem[item];
