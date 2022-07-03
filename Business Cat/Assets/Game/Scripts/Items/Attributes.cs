@@ -5,7 +5,8 @@ public enum Attribute
 {
     None,
     Serious,
-    Stylish
+    Stylish,
+    Sincere
 }
 
 public class Attributes : MonoBehaviour
@@ -21,7 +22,7 @@ public class Attributes : MonoBehaviour
         for (int i = 0; i < count; i++)
             attributes.Add((Attribute)i, 0);
 
-        items.AddRunnableOnLoad(new Runnable(CreateAttributes));
+        items.OnLoad.Add(new Runnable(CreateAttributes));
     }
 
     private void CreateAttributes()

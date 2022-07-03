@@ -11,7 +11,7 @@ public class Cat : MonoBehaviour
     private void Awake()
     {
         equipment = new Dictionary<ItemType, Item>();
-        items.AddRunnableOnLoad(new Runnable(LoadEquipment));
+        items.OnLoad.Add(new Runnable(LoadEquipment));
     }
 
     private void LoadEquipment()

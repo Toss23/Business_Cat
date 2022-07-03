@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 1
   identifier: Item 1
+  displayName: Super Item
   sprite: {fileID: 0}
   type: 0
   attribute: 1

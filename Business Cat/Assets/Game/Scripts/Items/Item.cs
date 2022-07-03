@@ -8,7 +8,7 @@ public enum ItemType
     Glasses
 }
 
-[CreateAssetMenu(fileName = "Item", menuName = "New Item Data")]
+[CreateAssetMenu(fileName = "Item", menuName = "Gameplay/New Item")]
 public class Item : ScriptableObject
 {
     [SerializeField] private int index;

@@ -8,6 +8,14 @@ public class Items : MonoBehaviour
     private Dictionary<Item, bool> haveItem;
 
     public Item[] Array { get { return items; } }
+    public List<Runnable> OnLoad 
+    { 
+        get 
+        {
+            if (onLoad == null) onLoad = new List<Runnable>();
+            return onLoad; 
+        } 
+    }
 
     private void Start()
     {
@@ -24,8 +32,8 @@ public class Items : MonoBehaviour
 
         if (onLoad != null)
         {
-            for (int i = 0; i < onLoad.Count; i++)
-                onLoad[i].Run();
+            foreach (Runnable runnable in onLoad)
+                runnable.Run();
         }
     }
 
@@ -77,11 +85,5 @@ public class Items : MonoBehaviour
     public bool HaveItem(Item item)
     {
         return haveItem[item];
-    }
-
-    public void AddRunnableOnLoad(Runnable runnable)
-    {
-        if (onLoad == null) onLoad = new List<Runnable>();
-        onLoad.Add(runnable);
     }
 }

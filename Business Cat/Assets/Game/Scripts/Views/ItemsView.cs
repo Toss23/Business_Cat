@@ -14,7 +14,7 @@ public class ItemsView : MonoBehaviour
     private void Awake()
     {
         rows = new List<GameObject>();
-        items.AddRunnableOnLoad(new Runnable(CreateView));
+        items.OnLoad.Add(new Runnable(CreateView));
     }
 
     public void CreateView()
