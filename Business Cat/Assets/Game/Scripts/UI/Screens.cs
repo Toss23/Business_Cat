@@ -7,6 +7,8 @@ public class Screens : MonoBehaviour
         None, Left, Right
     }
 
+    public static Screens Instance { get; private set; }
+
     [Header("Main")]
     [SerializeField] private float swipeSensetive;
     [SerializeField] private float swipeSpeed;
@@ -19,6 +21,11 @@ public class Screens : MonoBehaviour
     private Screen currentScreen;
     private Screen nextScreen;
     private bool switchingScreen;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {

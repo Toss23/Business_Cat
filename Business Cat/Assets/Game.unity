@@ -5498,7 +5498,7 @@ GameObject:
   - component: {fileID: 882313866}
   - component: {fileID: 882313865}
   m_Layer: 5
-  m_Name: Tabs
+  m_Name: Screens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6450,7 +6450,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba579fe2bb394624bab1fcd7b8cc46f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  identifier: Coockie-Fish
+  identifier: Fish
+  type: 1
   count: 100
   countMax: 10000000
   text: {fileID: 786765962}

@@ -1,10 +1,24 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class Currency : MonoBehaviour
 {
+    public static string Money { get; private set; } = "Money";
+    public static string Donate { get; private set; } = "Donate";
+
+    private enum Type
+    {
+        Default,
+        Money,
+        Donate
+    }
+
+    private static List<Currency> currencies; 
+
     [Header("Main")]
     [SerializeField] private string identifier;
+    [SerializeField] private Type type;
     [SerializeField] private int count;
     [SerializeField] private int countMax;
 
@@ -13,19 +27,30 @@ public class Currency : MonoBehaviour
 
     public int Count { get { return count; } }
 
-    private void Start()
+    private void Awake()
     {
-        UpdateText();
+        if (currencies == null) currencies = new List<Currency>();
+        currencies.Add(this);
+
+        switch (type)
+        {
+            case Type.Money:
+                Money = identifier;
+                break;
+            case Type.Donate:
+                Donate = identifier;
+                break;
+        }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         UpdateText();
     }
 
     public bool Add(int value)
     {
-        if (value > 0)
+        if (value >= 0)
         {
             if (count + value <= countMax)
             {
@@ -39,7 +64,7 @@ public class Currency : MonoBehaviour
 
     public bool Remove(int value)
     {
-        if (value > 0)
+        if (value >= 0)
         {
             if (count - value >= 0)
             {
@@ -54,5 +79,15 @@ public class Currency : MonoBehaviour
     private void UpdateText()
     {
         if (text != null) text.text = count + " " + identifier;
+    }
+
+    public static Currency Find(string identifier)
+    {
+        foreach (Currency currency in currencies)
+        {
+            if (identifier == currency.identifier)
+                return currency;
+        }
+        return null;
     }
 }
