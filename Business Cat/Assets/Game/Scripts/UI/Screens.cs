@@ -25,10 +25,7 @@ public class Screens : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
 
-    private void Start()
-    {
         foreach (Screen screen in screens)
         {
             Vector2 tabPosition = canvas.rect.size * screen.Position;

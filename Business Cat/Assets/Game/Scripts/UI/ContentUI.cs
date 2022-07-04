@@ -12,7 +12,7 @@ public class ContentUI : MonoBehaviour
     private static List<ContentUI> List;
 
     [SerializeField] private string contentName;
-    [SerializeField] private State state;
+    [SerializeField] private State state = State.Hidden;
     [SerializeField] private GameObject content;
     [SerializeField] private bool haveImage = false;
 
@@ -26,7 +26,10 @@ public class ContentUI : MonoBehaviour
         if (List == null) List = new List<ContentUI>();
         if (haveImage) image = GetComponent<Image>();
         List.Add(this);
-        Hide();
+
+        bool needHide = state == State.Hidden;
+        Show();
+        if (needHide) Hide();
     }
 
     public void Show()

@@ -15,16 +15,17 @@ MonoBehaviour:
   displayName: Event
   prestige: 0
   shortDescription: 132
-  price: 0
+  price: 12
   actions:
   - displayName: Action
-    description: 
+    weight: 100
+    description: 123
     variants:
     - displayName: Variant
-      description: 
+      description: Variant 1
       result: 0
       value: 0
     - displayName: Variant
-      description: 
+      description: Variant 2
       result: 0
       value: 0

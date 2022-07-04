@@ -36,6 +36,7 @@ public class EventView : MonoBehaviour
     {
         if (currency.Remove(currentEvent.Price))
         {
+            EventAction.Instance.StartEvent(currentEvent);
             screens.InstantlyOpen("EventAction");
         }
     }
