@@ -3,6 +3,16 @@ using UnityEngine;
 
 public static class LocalData
 {
+    public static int LoadAttribute(Attribute attribute)
+    {
+        return PlayerPrefs.GetInt(attribute.ToString());
+    }
+
+    public static void SaveAttribute(Attribute attribute, int value)
+    {
+        PlayerPrefs.SetInt(attribute.ToString(), value);
+    }
+
     public static void SaveItemPurchase(Item item)
     {
         SetBool(item.Identifier, true);

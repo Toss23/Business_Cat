@@ -4,7 +4,7 @@ using UnityEngine;
 public class Company : MonoBehaviour
 {
     [HideInInspector] public Companies OnClickListener;
-    [HideInInspector] public Companies OnUpdateListener;
+    [HideInInspector] public Companies OnUpdatePrice;
 
     [Header("Main")]
     [SerializeField] private string identidier;
@@ -12,11 +12,9 @@ public class Company : MonoBehaviour
 
     [Header("Price")]
     [SerializeField] private int priceHistoryLength;
-    [SerializeField] private float updateTime;
     [SerializeField] private int priceMin;
     [SerializeField] private int priceMax;
     [SerializeField] [Range(0, 1)] private float priceSpread;
-    private float timer;
     private int currentPrice;
     private int[] priceHistory;
     private int priceDelta { get { return priceMax - priceMin; } }
@@ -26,6 +24,7 @@ public class Company : MonoBehaviour
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private TMP_Text countText;
 
+    public string Identidier { get { return identidier; } }
     public float PriceTrend { get; set; } = 0.5f;
     public int[] PriceHistory { get { return priceHistory; } }
     public int Price { get { return currentPrice; } }
@@ -37,24 +36,20 @@ public class Company : MonoBehaviour
             priceHistory[i] = 0;
     }
 
-    private void Update()
+    private void Start()
+    {
+        float random = Random.Range((PriceTrend - priceSpread) * priceDelta, (PriceTrend + priceSpread) * priceDelta);
+        int delta = Mathf.RoundToInt(random);
+        int value = priceMin + Mathf.Clamp(delta, 0, priceDelta);
+        SetPrice(value);
+        UpdateText();
+    }
+
+    private void UpdateText()
     {
         nameText.text = identidier;
         priceText.text = "Price: " + currentPrice;
         countText.text = "Count: " + count;
-
-        timer += Time.deltaTime;
-        if (timer >= updateTime)
-        {
-            timer -= updateTime;
-
-            float random = Random.Range((PriceTrend - priceSpread) * priceDelta, (PriceTrend + priceSpread) * priceDelta);
-            int delta = Mathf.RoundToInt(random);
-            int value = priceMin + Mathf.Clamp(delta, 0, priceDelta);
-            SetPrice(value);
-
-            if (OnUpdateListener != null) OnUpdateListener.UpdateGraph();
-        }
     }
 
     private void SetPrice(int value)
@@ -67,6 +62,7 @@ public class Company : MonoBehaviour
             else
                 priceHistory[i] = value;
         }
+        if (OnUpdatePrice != null) OnUpdatePrice.UpdateGraph();
     }
 
     public void OnClick()
@@ -81,6 +77,7 @@ public class Company : MonoBehaviour
             if (count + value <= 1000000)
             {
                 count += value;
+                UpdateText();
                 return true;
             }
         }
@@ -94,6 +91,7 @@ public class Company : MonoBehaviour
             if (count - value >= 0)
             {
                 count -= value;
+                UpdateText();
                 return true;
             }
         }

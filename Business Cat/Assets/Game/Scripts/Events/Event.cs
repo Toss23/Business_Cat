@@ -52,17 +52,34 @@ public class Action
 [System.Serializable]
 public class Variant
 {
-    public enum Result
+    public enum ResultVariant
     {
-        None, Money, Reputation, Stock
+        None, Money, Attribute, Company
     }
 
     [SerializeField] private string displayName;
     [SerializeField] [Multiline] private string description;
     [Space(10)]
-    [SerializeField] private Result result;
+    [SerializeField] private ResultVariant result;
     [SerializeField] private int value;
+    [Header("If result == Attribute")]
+    [SerializeField] private Attribute attribute;
+    [Header("If result == Company")]
+    [SerializeField] private string companyName;
+    [Header("Check")]
+    [SerializeField] private int minPercent;
+    [SerializeField] private int maxPercent;
+    [SerializeField] private int attributeValue;
+    [SerializeField] private Attribute attributeCheck;
 
     public string DisplayName { get { return displayName; } }
     public string Description { get { return description; } }
+    public ResultVariant Result { get { return result; } }
+    public int Value { get { return value; } }
+    public Attribute Attribute { get { return attribute; } }
+    public string CompanyName { get { return companyName; } }
+    public int MinPercent { get { return minPercent; } }
+    public int MaxPercent { get { return maxPercent; } }
+    public int AttributeValue { get { return attributeValue; } }
+    public Attribute AttributeCheck { get { return attributeCheck; } }
 }

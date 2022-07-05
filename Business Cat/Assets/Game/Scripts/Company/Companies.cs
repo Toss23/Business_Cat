@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Companies : MonoBehaviour
 {
+    public static Companies Instance { get; private set; }
+
     [SerializeField] private Currency currency;
     [SerializeField] private Graph graph;
     [SerializeField] private Company[] companies;
@@ -9,6 +11,8 @@ public class Companies : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         foreach (Company company in companies)
             company.OnClickListener = this;
     }
@@ -16,10 +20,10 @@ public class Companies : MonoBehaviour
     public void Select(Company company)
     {
         if (this.company != null) 
-            this.company.OnUpdateListener = null;
+            this.company.OnUpdatePrice = null;
         
         this.company = company;
-        this.company.OnUpdateListener = this;
+        this.company.OnUpdatePrice = this;
         UpdateGraph();
     }
 
@@ -51,5 +55,15 @@ public class Companies : MonoBehaviour
                     company.Add(count);
             }
         }
+    }
+
+    public Company Find(string identifier)
+    {
+        foreach (Company company in companies)
+        {
+            if (company.Identidier == identifier)
+                return company;
+        }
+        return null;
     }
 }
