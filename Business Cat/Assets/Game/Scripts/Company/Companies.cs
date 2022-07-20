@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Companies : MonoBehaviour
+public class Companies : MonoBehaviour, IUpdatable
 {
     public static Companies Instance { get; private set; }
 
@@ -15,6 +15,16 @@ public class Companies : MonoBehaviour
 
         foreach (Company company in companies)
             company.OnClickListener = this;
+
+        StepSystem.Instance.AddListener(this);
+    }
+
+    public void OnStep()
+    {
+        foreach (Company company in companies)
+        {
+            company.UpdatePrice();
+        }
     }
 
     public void Select(Company company)

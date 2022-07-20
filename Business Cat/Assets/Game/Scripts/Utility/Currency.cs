@@ -21,6 +21,7 @@ public class Currency : MonoBehaviour
     [SerializeField] private Type type;
     [SerializeField] private int count;
     [SerializeField] private int countMax;
+    [SerializeField] private bool useSuffix;
 
     [Header("View")]
     [SerializeField] private TMP_Text text;
@@ -78,7 +79,11 @@ public class Currency : MonoBehaviour
 
     private void UpdateText()
     {
-        if (text != null) text.text = count + " " + identifier;
+        if (text != null)
+        {
+            text.text = count.ToString();
+            if (useSuffix) text.text += " " + identifier;
+        }
     }
 
     public static Currency Find(string identifier)

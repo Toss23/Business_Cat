@@ -38,6 +38,11 @@ public class Company : MonoBehaviour
 
     private void Start()
     {
+        UpdatePrice();
+    }
+
+    public void UpdatePrice()
+    {
         float random = Random.Range((PriceTrend - priceSpread) * priceDelta, (PriceTrend + priceSpread) * priceDelta);
         int delta = Mathf.RoundToInt(random);
         int value = priceMin + Mathf.Clamp(delta, 0, priceDelta);

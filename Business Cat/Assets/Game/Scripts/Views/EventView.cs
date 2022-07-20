@@ -24,7 +24,7 @@ public class EventView : MonoBehaviour
 
     public void SetEvent(Event e)
     {
-        nameText.text = e.DisplayName + " (Prestige " + e.Prestige + ")";
+        nameText.text = e.DisplayName;
         descriptionText.text = e.ShortDescription;
         priceText.text = e.Price > 0 ? e.Price + " " + Currency.Money : "";
 

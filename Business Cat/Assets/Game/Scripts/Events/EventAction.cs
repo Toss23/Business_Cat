@@ -80,5 +80,7 @@ public class EventAction : MonoBehaviour
             successScreen.SetActive(true);
         else
             loseScreen.SetActive(true);
+
+        StepSystem.Instance.NextStep();
     }
 }

@@ -35,7 +35,10 @@ public class Screens : MonoBehaviour
             if (screen.Position == new Vector2(0, 0))
                 currentScreen = screen;
         }
+    }
 
+    private void Start()
+    {
         positionBegin = transform.localPosition;
     }
 

@@ -15,29 +15,19 @@ MonoBehaviour:
   displayName: Event
   prestige: 0
   shortDescription: 132
-  price: 12
+  price: 0
   actions:
   - displayName: Action
     weight: 100
-    description: 123
+    description: This <color=red>importent words</color> in text
     variants:
     - displayName: Variant
       description: Variant 1
-      result: 1
-      value: 50
-      attribute: 0
+      result: 2
+      value: 1
+      attribute: 1
       companyName: 
       minPercent: 10
       maxPercent: 50
       attributeValue: 2
       attributeCheck: 1
-    - displayName: Variant
-      description: Variant 2
-      result: 2
-      value: 1
-      attribute: 2
-      companyName: 
-      minPercent: 20
-      maxPercent: 90
-      attributeValue: 1
-      attributeCheck: 2
